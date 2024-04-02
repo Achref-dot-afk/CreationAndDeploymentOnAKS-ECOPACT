@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  database:
+    container_name: database
+    image: mongo:latest
+    restart: always
+    volumes:
+      - database:/data/ecopactmicroservices/db
+  ecopact_app:
+    container_name: ecopact_app_container
+    image: houssem28/ecopact_frontend_service
+    stdin_open: true
+    ports:
+      - "5173:5173"
+    depends_on:
+      - database
+  auth:
+    container_name: auth
+    image: achref2h/auth
+    ports:
+      - "3002:3002"
+    depends_on:
+      - database
+  data:
+    container_name: data
+    image: houssem28/ecopact_data_service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - database
+  prediction:
+    container_name: prediction
+    image: houssem28/ecopact_prediction_service
+    ports:
+      - "3004:3004"
+    depends_on:
+      - database
+  user:
+    container_name: user
+    image: achref2h/user
+    ports:
+      - "3005:3005"
+    depends_on:
+      - database
+  alert:
+    container_name: alert
+    image: houssem28/ecopact_alert_service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - database
+volumes:
+  database: {}

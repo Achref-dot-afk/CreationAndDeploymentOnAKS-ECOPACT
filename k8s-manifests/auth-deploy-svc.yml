@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  labels:
+    app: auth-micro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-micro
+  template:
+    metadata:
+      labels:
+        app: auth-micro
+    spec:
+      containers:
+      - name:  auth-backend
+        image: achref2h/auth:latest
+        ports:
+        - containerPort: 3002
+        env:
+            - name: DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: JWT_SECRET
+            - name: APP_EMAIL_ADRESS
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: APP_EMAIL_ADRESS
+            - name: APP_EMAIL_ADRESS_RECEIVER
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: APP_EMAIL_ADRESS_RECEIVER
+            - name: APP_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: APP_EMAIL_PASSWORD
+            - name: APP_SVC
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: APP_SVC
+      volumes:
+         - name: shared-storage
+           persistentVolumeClaim:
+             claimName: auth-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+spec:
+  selector:
+    app: auth-micro
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002

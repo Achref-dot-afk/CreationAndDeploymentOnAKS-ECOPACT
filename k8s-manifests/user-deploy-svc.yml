@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  labels:
+    app: user-micro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-micro
+  template:
+    metadata:
+      labels:
+        app: user-micro
+    spec:
+      containers:
+      - name:  user-backend
+        image: houssem28/ecopact_user_service
+        ports:
+        - containerPort: 3005
+        env:
+            - name: DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: JWT_SECRET
+            - name: APP_EMAIL_ADRESS
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: APP_EMAIL_ADRESS
+            - name: APP_EMAIL_ADRESS_RECEIVER
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: APP_EMAIL_ADRESS_RECEIVER
+            - name: APP_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: APP_EMAIL_PASSWORD
+      volumes:
+         - name: shared-storage
+           persistentVolumeClaim:
+             claimName: user-pvc
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+spec:
+  selector:
+    app: user-micro
+  ports:
+    - protocol: TCP
+      port: 3005
+      targetPort: 3005

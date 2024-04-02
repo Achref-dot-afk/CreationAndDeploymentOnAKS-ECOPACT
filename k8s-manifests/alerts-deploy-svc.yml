@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerts-deployment
+  labels:
+    app: alert-micro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-micro
+  template:
+    metadata:
+      labels:
+        app: alert-micro
+    spec:
+      containers:
+      - name:  alert-backend
+        image: houssem28/ecopact_alert_service:latest
+        ports:
+        - containerPort: 3001
+        env:
+            - name: DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: JWT_SECRET
+      volumes:
+         - name: shared-storage
+           persistentVolumeClaim:
+             claimName: alert-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert
+spec:
+  selector:
+    app: alert-micro
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001

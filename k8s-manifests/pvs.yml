@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: alert-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/alert
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: app-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/app
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: auth-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/auth
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/data
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/db
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prediction-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/prediction
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: user-pv
+spec:
+  storageClassName: fast
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/user

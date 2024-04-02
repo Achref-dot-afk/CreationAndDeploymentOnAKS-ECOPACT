@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-deployment
+  labels:
+    app: data-micro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-micro
+  template:
+    metadata:
+      labels:
+        app: data-micro
+    spec:
+      containers:
+      - name:  data-backend
+        image: houssem28/ecopact_data_service
+        ports:
+        - containerPort: 3003
+        env:
+            - name: DB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-data
+                  key: JWT_SECRET
+      volumes:
+         - name: shared-storage
+           persistentVolumeClaim:
+             claimName: data-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data
+spec:
+  selector:
+    app: data-micro
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 3003
